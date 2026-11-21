@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
-"""Entrypoint: copy the pre-rendered front page to the output path."""
+"""Entrypoint: copy the pre-rendered front page to the output path.
+
+Deterministic: the same news.png bytes are copied on every run.
+"""
 import os
 import shutil
 import sys
