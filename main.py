@@ -1,18 +1,37 @@
 #!/usr/bin/env python3
-"""Entrypoint: copy the pre-rendered front page to the output path.
+"""Entrypoint for the News Image 21 Nov 2026 entry.
 
-Deterministic: the same news.png bytes are copied on every run.
+The grader runs this file. Its whole job is to take the finished front
+page (news.png, which lives beside this script in the repository) and
+place a copy at the fixed location the grader reads: /output/entry.png.
+Only the Python standard library is used.
 """
-import os
+
 import shutil
-import sys
+from pathlib import Path
 
-HERE = os.path.dirname(os.path.abspath(__file__))
-SRC = os.path.join(HERE, "news.png")
-OUT_DIR = os.environ.get("MAKEFUN_OUTPUT_DIR") or os.environ.get("OUTPUT_DIR") or "/output"
-DST = os.path.join(OUT_DIR, "entry.png")
+OUTPUT_DIR = Path("/output")
+OUTPUT_NAME = "entry.png"
+SOURCE_NAME = "news.png"
 
-os.makedirs(OUT_DIR, exist_ok=True)
-shutil.copyfile(SRC, DST)
-print(DST, os.path.getsize(DST))
-sys.exit(0)
+
+def produce_entry() -> Path:
+    """Copy the front page next to this script into /output/entry.png."""
+    here = Path(__file__).resolve().parent
+    source = here / SOURCE_NAME
+    if not source.is_file():
+        raise SystemExit(f"missing source image: {source}")
+    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    target = OUTPUT_DIR / OUTPUT_NAME
+    shutil.copyfile(source, target)
+    return target
+
+
+def main() -> None:
+    written = produce_entry()
+    size = written.stat().st_size
+    print(f"Wrote {written} ({size} bytes) from {SOURCE_NAME}")
+
+
+if __name__ == "__main__":
+    main()
